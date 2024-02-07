@@ -78,8 +78,8 @@
     [(not (contains? board 'O)) #f]
     [(not (> (get-index row col) 0)) #f]
     [(not (< (get-index row col) (length board))) #f]
-    [(not (equal? (list-ref board (get-index row col)) 'E)) #t]
-    [else #t]))
+    [(equal? (list-ref board (get-index row col)) 'E) #t]
+    [else #f]))
 
 ;;; To make a move, replace the position at row col to player ('X or 'O)
 (define (make-move board row col player)
@@ -96,7 +96,6 @@
 
 ;;; To determine whether there is a winner?
 (define (winner? board)
-  
   (define (contains? lst element)
     (not (empty? (member element lst))))
 
@@ -108,7 +107,8 @@
     (h board))
 
   (define (diag-contains-pattern? pattern board)
-    (equal? (diagonal board) pattern))
+    (or (equal? (diagonal board) pattern)
+        (equal? (reverse-diagonal board) pattern)))
 
   (define (col-contains-pattern? pattern board)
     (any-col-contains? pattern (get-cols-k board)))
@@ -122,6 +122,16 @@
       (if (empty? l)
           '()
           (cons (list-ref board (+ (first l) (* (first l) size)))
+                (get-ith (rest l)))))
+    (get-ith (range size)))
+
+ 
+  (define (reverse-diagonal board)
+    (define size (sqrt (length board)))
+    (define (get-ith l)
+      (if (empty? l)
+          '()
+          (cons (list-ref board (+ (- size (first l) 1) (* (first l) size)))
                 (get-ith (rest l)))))
     (get-ith (range size)))
 
@@ -143,7 +153,7 @@
         (if (equal? (car rows) pattern)
             #t
             (any-row-contains? pattern (cdr rows)))))
-  
+
   (cond
     [(not (list? board)) #f]
     [(not (contains? board '(X O))) #f]
