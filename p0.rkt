@@ -60,7 +60,6 @@
 ;;; If player ('X or 'O) want to make a move, check whether it's this
 ;;; player's turn and the position on the board is empty ('E)
 (define (valid-move? board row col player)
-  
   (define (contains? lst element)
     (not (empty? (member element lst))))
 
@@ -70,16 +69,16 @@
     (+ (* row size) col))
 
   (cond
-    [(not (list? board)) #f]
-    [(not (number? row)) #f]
-    [(not (number? col)) #f]
+    [(not (board? board)) #f]
+    [(not (integer? row)) #f] 
+    [(not (integer? col)) #f] 
     [(not (or (equal? player 'X) (equal? player 'O))) #f]
-    [(not (contains? board 'X)) #f]
-    [(not (contains? board 'O)) #f]
     [(not (> (get-index row col) 0)) #f]
     [(not (< (get-index row col) (length board))) #f]
-    [(equal? (list-ref board (get-index row col)) 'E) #t]
-    [else #f]))
+    [(not (equal? (list-ref board (get-index row col)) 'E)) #f]
+    [(not (equal? (next-player board) player)) #f] 
+    [else #t]))
+
 
 ;;; To make a move, replace the position at row col to player ('X or 'O)
 (define (make-move board row col player)
@@ -106,9 +105,10 @@
           (cons (take b (sqrt (length board))) (h (drop b (sqrt (length board)))))))
     (h board))
 
+  
   (define (diag-contains-pattern? pattern board)
     (or (equal? (diagonal board) pattern)
-        (equal? (reverse-diagonal board) pattern)))
+        (equal? (reverse (diagonal board)) pattern)))
 
   (define (col-contains-pattern? pattern board)
     (any-col-contains? pattern (get-cols-k board)))
@@ -122,16 +122,6 @@
       (if (empty? l)
           '()
           (cons (list-ref board (+ (first l) (* (first l) size)))
-                (get-ith (rest l)))))
-    (get-ith (range size)))
-
- 
-  (define (reverse-diagonal board)
-    (define size (sqrt (length board)))
-    (define (get-ith l)
-      (if (empty? l)
-          '()
-          (cons (list-ref board (+ (- size (first l) 1) (* (first l) size)))
                 (get-ith (rest l)))))
     (get-ith (range size)))
 
@@ -164,7 +154,6 @@
          (diag-contains-pattern? '(O O O) board)
          (col-contains-pattern? '(O O O) board)) 'O]
     [else #f]))
-
 
 
 ;;; The board is the list containing E O X
