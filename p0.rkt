@@ -31,19 +31,18 @@
 
 ; Check whether a list is a valid board
 (define (board? lst)
-  (define (contains? lst element)
-    (not (empty? (member element lst))))
   
   (define size (sqrt (length lst)))
-  
-  (cond
-    [(not (integer? size)) #f]
-    [(not (= (* size size) (length lst))) #f]  
-    [(equal? (car lst) 'X) #t]  
-    [(contains? lst '(X O E)) #t]  
-    [(= 1 (abs (- (count 'X lst) (count 'O lst)))) #f]
-    [else #f]))
+  (define count-x (count (lambda (x) (equal? x 'X)) lst))
+  (define count-o (count (lambda (x) (equal? x 'O)) lst))
 
+  (and (integer? size)
+       (= (* size size) (length lst))
+       (not (empty? lst))
+       (or (member 'X lst)
+           (member 'O lst)
+           (member 'E lst))
+       (<= (abs (- count-x count-o)) 1)))
 
 ;;; From the board, calculate who is making a move this turn
 (define (next-player board)
@@ -144,7 +143,7 @@
         (if (equal? (car rows) pattern)
             #t
             (any-row-contains? pattern (cdr rows)))))
-
+  
   (cond
     [(not (list? board)) #f]
     [(not (contains? board '(X O))) #f]
