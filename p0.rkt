@@ -33,15 +33,17 @@
 (define (board? lst)
   (define (contains? lst element)
     (not (empty? (member element lst))))
-
-;; (define size (sqrt (length lst)))
+  
+  (define size (sqrt (length lst)))
   
   (cond
-   [(not (= (length lst) 9)) #f]
-   [(equal? (car lst) 'X) #t]
-   [(contains? lst '(X O E)) #t]
-   [(= 1 (abs (- (count 'X lst) (count 'O lst)))) #t]
-   [else #f]))
+    [(not (integer? size)) #f]
+    [(not (= (* size size) (length lst))) #f]  
+    [(equal? (car lst) 'X) #t]  
+    [(contains? lst '(X O E)) #t]  
+    [(= 1 (abs (- (count 'X lst) (count 'O lst)))) #f]
+    [else #f]))
+
 
 ;;; From the board, calculate who is making a move this turn
 (define (next-player board)
@@ -63,8 +65,10 @@
   (define (contains? lst element)
     (not (empty? (member element lst))))
 
+  (define size (sqrt (length board)))
+
   (define (get-index row col)
-    (+ (* row 3) col))
+    (+ (* row size) col))
 
   (cond
     [(not (list? board)) #f]
@@ -75,7 +79,7 @@
     [(not (contains? board 'O)) #f]
     [(not (> (get-index row col) 0)) #f]
     [(not (< (get-index row col) (length board))) #f]
-    [(not (equal? (list-ref board (get-index row col)) 'E)) #f]
+    [(not (equal? (list-ref board (get-index row col)) 'E)) #t]
     [else #t]))
 
 ;;; To make a move, replace the position at row col to player ('X or 'O)
