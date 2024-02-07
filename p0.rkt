@@ -98,16 +98,19 @@
   (define (contains? lst element)
     (not (empty? (member element lst))))
 
-  (define (get-rows-k board)
-    (define (h b)
-      (if (empty? b)
-          '()
-          (cons (take b (sqrt (length board))) (h (drop b (sqrt (length board)))))))
-    (h board))
+  (define size (sqrt (length board)))
 
+   (define (get-rows-k board)
+  (define (h b)
+    (if (empty? b)
+        '()
+        (cons (take b (sqrt (length board))) (h (drop b (sqrt (length board)))))))
+  (h board))
+
+  
   (define (diag-contains-pattern? pattern board)
     (or (equal? (diagonal board) pattern)
-        (equal? (reverse-diagonal board) pattern)))
+        (equal? (reverse (diagonal board)) pattern)))
 
   (define (col-contains-pattern? pattern board)
     (any-col-contains? pattern (get-cols-k board)))
@@ -121,15 +124,6 @@
       (if (empty? l)
           '()
           (cons (list-ref board (+ (first l) (* (first l) size)))
-                (get-ith (rest l)))))
-    (get-ith (range size)))
-
-  (define (reverse-diagonal board)
-    (define size (sqrt (length board)))
-    (define (get-ith l)
-      (if (empty? l)
-          '()
-          (cons (list-ref board (+ (- size (first l) 1) (* (first l) size)))
                 (get-ith (rest l)))))
     (get-ith (range size)))
 
@@ -155,14 +149,13 @@
   (cond
     [(not (list? board)) #f]
     [(not (contains? board '(X O))) #f]
-    [(or (row-contains-pattern? '(X X X) board)
-         (diag-contains-pattern? '(X X X) board)
-         (col-contains-pattern? '(X X X) board)) 'X]
-    [(or (row-contains-pattern? '(O O O) board)
-         (diag-contains-pattern? '(O O O) board)
-         (col-contains-pattern? '(O O O) board)) 'O]
+    [(or (row-contains-pattern? '(X X X X) board)
+         (diag-contains-pattern? '(X X X X) board)
+         (col-contains-pattern? '(X X X X) board)) 'X]
+    [(or (row-contains-pattern? '(O O O O) board)
+         (diag-contains-pattern? '(O O O O) board)
+         (col-contains-pattern? '(O O O O) board)) 'O]
     [else #f]))
-
 
 
 ;;; The board is the list containing E O X
