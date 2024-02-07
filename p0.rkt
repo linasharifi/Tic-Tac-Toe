@@ -31,28 +31,132 @@
 
 ; Check whether a list is a valid board
 (define (board? lst)
-  'todo)
+  (define (contains? lst element)
+    (not (empty? (member element lst))))
+
+;; (define size (sqrt (length lst)))
+  
+  (cond
+   [(not (= (length lst) 9)) #f]
+   [(equal? (car lst) 'X) #t]
+   [(contains? lst '(X O E)) #t]
+   [(= 1 (abs (- (count 'X lst) (count 'O lst)))) #t]
+   [else #f]))
 
 ;;; From the board, calculate who is making a move this turn
 (define (next-player board)
-  'todo)
+  (define (count-helper player lst)
+    (if (empty? lst)
+        0
+        (+ (if (equal? (car lst) player) 1 0)
+           (count-helper player (cdr lst)))))
 
+  (cond
+    [(board? board)
+     (if (> (count-helper 'X board) (count-helper 'O board))
+         'O
+         'X)]))
 ;;; If player ('X or 'O) want to make a move, check whether it's this
 ;;; player's turn and the position on the board is empty ('E)
 (define (valid-move? board row col player)
-  'todo)
+  
+  (define (contains? lst element)
+    (not (empty? (member element lst))))
+
+  (define (get-index row col)
+    (+ (* row 3) col))
+
+  (cond
+    [(not (list? board)) #f]
+    [(not (number? row)) #f]
+    [(not (number? col)) #f]
+    [(not (or (equal? player 'X) (equal? player 'O))) #f]
+    [(not (contains? board 'X)) #f]
+    [(not (contains? board 'O)) #f]
+    [(not (> (get-index row col) 0)) #f]
+    [(not (< (get-index row col) (length board))) #f]
+    [(not (equal? (list-ref board (get-index row col)) 'E)) #f]
+    [else #t]))
 
 ;;; To make a move, replace the position at row col to player ('X or 'O)
 (define (make-move board row col player)
-  'todo)
+
+  (define (get-index row col)
+    (+ (* row 3) col))
+    
+  (cond
+    [(not (list? board)) #f]
+    [(not (exact-nonnegative-integer? row)) #f]
+    [(not (exact-nonnegative-integer? col)) #f]
+    [(not (or (equal? player 'X) (equal? player 'O))) #f]
+    [else (cons player board)]))
 
 ;;; To determine whether there is a winner?
 (define (winner? board)
-  'todo)
+  
+  (define (contains? lst element)
+    (not (empty? (member element lst))))
 
-;;; The board is the list containing E O X 
+  (define (get-rows-k board)
+    (define (h b)
+      (if (empty? b)
+          '()
+          (cons (take b (sqrt (length board))) (h (drop b (sqrt (length board)))))))
+    (h board))
+
+  (define (diag-contains-pattern? pattern board)
+    (equal? (diagonal board) pattern))
+
+  (define (col-contains-pattern? pattern board)
+    (any-col-contains? pattern (get-cols-k board)))
+
+  (define (row-contains-pattern? pattern board)
+    (any-row-contains? pattern (get-rows-k board)))
+
+  (define (diagonal board)
+    (define size (sqrt (length board)))
+    (define (get-ith l)
+      (if (empty? l)
+          '()
+          (cons (list-ref board (+ (first l) (* (first l) size)))
+                (get-ith (rest l)))))
+    (get-ith (range size)))
+
+  (define (get-cols-k board)
+    (if (not (list? (car board)))
+        '() 
+        (apply map list board)))
+
+  (define (any-col-contains? pattern cols)
+    (if (empty? cols)
+        #f
+        (if (equal? (car cols) pattern)
+            #t
+            (any-col-contains? pattern (cdr cols)))))
+
+  (define (any-row-contains? pattern rows)
+    (if (empty? rows)
+        #f
+        (if (equal? (car rows) pattern)
+            #t
+            (any-row-contains? pattern (cdr rows)))))
+
+  (cond
+    [(not (list? board)) #f]
+    [(not (contains? board '(X O))) #f]
+    [(or (row-contains-pattern? '(X X X) board)
+         (diag-contains-pattern? '(X X X) board)
+         (col-contains-pattern? '(X X X) board)) 'X]
+    [(or (row-contains-pattern? '(O O O) board)
+         (diag-contains-pattern? '(O O O) board)
+         (col-contains-pattern? '(O O O) board)) 'O]
+    [else #f]))
+
+
+
+;;; The board is the list containing E O X
 ;;; Player will always be 'O
 ;;; returns a pair of x and y
-(define (calculate-next-move board player)
-  'todo)
+ (define (calculate-next-move board player)
+    'todo)
 
