@@ -146,16 +146,21 @@
             #t
             (any-row-contains? pattern (cdr rows)))))
 
+  (define (make-pattern element size)
+  (make-list size element))
+  
   (cond
     [(not (list? board)) #f]
     [(not (contains? board '(X O))) #f]
-    [(or (row-contains-pattern? '(X X X X) board)
-         (diag-contains-pattern? '(X X X X) board)
-         (col-contains-pattern? '(X X X X) board)) 'X]
-    [(or (row-contains-pattern? '(O O O O) board)
-         (diag-contains-pattern? '(O O O O) board)
-         (col-contains-pattern? '(O O O O) board)) 'O]
+    [(or (row-contains-pattern? (make-pattern 'X size) board)
+         (diag-contains-pattern? (make-pattern 'X size) board)
+         (col-contains-pattern? (make-pattern 'X size) board)) 'X]
+    [(or (row-contains-pattern? (make-pattern 'O size) board)
+         (diag-contains-pattern? (make-pattern 'O size) board)
+         (col-contains-pattern? (make-pattern 'O size) board)) 'O]
     [else #f]))
+
+
 
 
 ;;; The board is the list containing E O X
