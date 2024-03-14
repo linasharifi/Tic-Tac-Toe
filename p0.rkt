@@ -66,7 +66,7 @@
   (define size (sqrt (length board)))
 
   (define (get-index row col)
-    (+ (* row size) col))
+    (+ (* row 3) col))
 
   (cond
     [(not (board? board)) #f]
@@ -83,8 +83,10 @@
 ;;; To make a move, replace the position at row col to player ('X or 'O)
 (define (make-move board row col player)
 
+   (define size (sqrt (length board)))
+
   (define (get-index row col)
-    (+ (* row 3) col))
+    (+ (* row size) col))
     
   (cond
     [(not (list? board)) #f]
@@ -159,7 +161,6 @@
          (diag-contains-pattern? (make-pattern 'O size) board)
          (col-contains-pattern? (make-pattern 'O size) board)) 'O]
     [else #f]))
-
 
 
 
